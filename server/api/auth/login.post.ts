@@ -1,8 +1,7 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { defineEventHandler, readBody, createError } from 'h3'
 import bcrypt from 'bcrypt'
 import pool from '../../utils/db'
-
 
 const invalidCredentialsError = () =>
   createError({
@@ -18,34 +17,28 @@ async function getUserByEmail(email: string) {
       [email]
     )
     return rows[0] || null
-  } finally {
-    client.release()
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Error fetching user'
+    })
   }
-}
-
-async function isPasswordValid(password: string, hashedPassword: string) {
-  return bcrypt.compare(password, hashedPassword)
 }
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const { email, password } = body
 
-  if (!email || !password) {
+  if (!email?.trim() || !password?.trim()) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Email and password are required'
+      statusMessage: 'Both email and password are required'
     })
   }
 
   const user = await getUserByEmail(email)
 
-  if (!user) {
-    throw invalidCredentialsError()
-  }
-
-  const valid = await isPasswordValid(password, user.password)
-  if (!valid) {
+  if (!user || !(await bcrypt.compare(password, user.password))) {
     throw invalidCredentialsError()
   }
 
@@ -54,6 +47,8 @@ export default defineEventHandler(async (event) => {
       id: user.id,
       name: user.name,
       role: user.role
-    }
+    },
+    message: 'Login successful!'
   }
 })
+
