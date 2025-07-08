@@ -1,0 +1,6 @@
+import '@patternfly/elements/pf-card/pf-card.js'
+import '@patternfly/elements/pf-button/pf-button.js'
+import '@patternfly/elements/pf-modal/pf-modal.js'
+import '@patternfly/elements/pf-badge/pf-badge.js'
+import '@patternfly/elements/pf-avatar/pf-avatar.js'
+import '@patternfly/elements/pf-dropdown/pf-dropdown.js'

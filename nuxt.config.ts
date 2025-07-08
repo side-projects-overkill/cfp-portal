@@ -11,5 +11,8 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxt/test-utils',
     '@nuxt/ui'
-  ]
+  ],
+   plugins: [
+    '~/plugins/render.html.ts'
+  ],
 })
