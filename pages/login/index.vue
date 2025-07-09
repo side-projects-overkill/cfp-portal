@@ -1,22 +1,26 @@
 <template>
-    <div class="form-container">
+    <pf-card class="form-card">
         <h1>Login</h1>
         <form @submit.prevent="handleLogin">
             <template v-for="field in inputFields" :key="field.name">
-                <input v-model="form[field.name]" :type="field.type" :placeholder="field.placeholder" >
+                <input v-model="form[field.name]" :type="field.type" :placeholder="field.placeholder">
                 <span>{{ errors[field.name] }}</span>
             </template>
 
-            <button type="submit">Login</button>
+            <pf-button class="pf-c-button">Login</pf-button>
 
-            <a href="/forgot-password" class="forgot-link">Forgot password?</a>
+            <NuxtLink to="/forgot-password" class="forgot-link">Forgot password?</NuxtLink>
         </form>
-    </div>
+    </pf-card>
+
 </template>
 
 <script setup>
+import '@patternfly/elements/pf-card/pf-card.js';
+import '@patternfly/elements/pf-button/pf-button.js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { rules } from '~/server/utils/validation';
 
 const router = useRouter()
 
@@ -32,9 +36,9 @@ const inputFields = [
 
 const errors = ref({})
 
-const rules = {
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/
+const errorMessages = {
+    email: 'Email should contain "@" and "."',
+    password: 'Password should be at least 6 characters, include letters and numbers'
 }
 
 function validateField(field, value) {
@@ -42,18 +46,13 @@ function validateField(field, value) {
 
     const rule = rules[field]
     if (!rule.test(value)) {
-        switch (field) {
-            case 'email':
-                return 'Email should contain "@" and "."'
-            case 'password':
-                return 'Password should be at least 6 characters, include letters and numbers'
-        }
+        return errorMessages[field] || 'Invalid input'
     }
 
     return ''
 }
 
-function handleLogin() {
+async function handleLogin() {
     const newErrors = {}
 
     for (const key in form.value) {
@@ -64,28 +63,42 @@ function handleLogin() {
     errors.value = newErrors
 
     if (Object.keys(newErrors).length === 0) {
-        alert('Login successful!')
+        const apiBase = useRuntimeConfig().public.API_BASE_URL
+        try {
+            const response = await $fetch(`${apiBase}/api/auth/login`, {
+                method: 'POST',
+                body: {
+                    email: form.value.email,
+                    password: form.value.password
+                }
+            })
 
-        form.value = {
-            email: '',
-            password: ''
+            alert(response.message || 'Login successful!')
+
+            form.value = {
+                email: '',
+                password: ''
+            }
+
+            router.push('/dashboard')
+        } catch (err) {
+            const msg = err?.data?.statusMessage || 'Login failed. Try again.'
+            alert(msg)
         }
-
-        router.push('/dashboard')
     }
 }
 </script>
 
 <style scoped>
-.form-container {
-    width: 100%;
+* {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.form-card {
     max-width: 600px;
     margin: 4rem auto;
     padding: 2rem;
-    background: #ffffff;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    border-radius: 8px;
-    box-sizing: border-box;
+    display: block;
 }
 
 h1 {
@@ -117,11 +130,12 @@ span {
     margin-top: -0.4rem;
 }
 
-button {
+.pf-c-button {
+    width: 80px;
+    align-self: center;
     background-color: #007bff;
     color: #ffffff;
     border: none;
-    padding: 0.7rem;
     font-weight: bold;
     border-radius: 4px;
     cursor: pointer;
@@ -129,9 +143,7 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background-color: #0056b3;
-}
+
 
 .forgot-link {
     text-align: right;
@@ -145,7 +157,7 @@ button:hover {
     text-decoration: underline;
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
     .form-container {
         margin: 2rem 1rem;

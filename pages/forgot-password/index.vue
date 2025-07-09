@@ -1,27 +1,34 @@
 <template>
-    <div class="form-container">
+    <pf-card class="form-card">
         <h1>Reset your Password</h1>
         <form @submit.prevent="handleSubmit">
-            <input v-model="email" type="text" placeholder="Enter your email" >
+            <input v-model="email" type="text" placeholder="Enter your email">
             <span>{{ error }}</span>
 
-            <button type="submit">Send Reset Link</button>
-
-            <router-link to="/login" class="back-link">Back to Login</router-link>
+            <pf-button class="pf-c-button">Send Reset Link</pf-button>
+            <NuxtLink to="/login" class="back-link">Back to Login</NuxtLink>
         </form>
-    </div>
+    </pf-card>
 </template>
 
 <script setup>
+import '@patternfly/elements/pf-card/pf-card.js';
+import '@patternfly/elements/pf-button/pf-button.js'
 import { ref } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+import emailjs from '@emailjs/browser'
+import { v4 as uuidv4 } from 'uuid'
+import { rules } from '~/server/utils/validation';
 
-// const router = useRouter()
+const router = useRouter()
 
 const email = ref('')
 const error = ref('')
+const message = ref('')
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const SERVICE_ID = 'service_r6tk9ii'
+const TEMPLATE_ID = 'template_2dmls66'
+const PUBLIC_KEY = 'pAWKcYpKic8yzixYp'
 
 function handleSubmit() {
     if (!email.value.trim()) {
@@ -29,30 +36,41 @@ function handleSubmit() {
         return
     }
 
-    if (!emailRegex.test(email.value)) {
+    if (!rules.email.test(email.value)) {
         error.value = 'Email should contain "@" and "."'
         return
     }
 
     error.value = ''
-    alert('Reset link sent to your email!')
-    email.value = ''
+    const token = uuidv4()
+    const resetLink = `http://localhost:3000/reset-password?token=${token}`
 
-
-    // router.push('/login')
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+        user_email: email.value,
+        link: resetLink
+    }, PUBLIC_KEY)
+        .then(() => {
+            message.value = "Resent link sent to your mail"
+            email.value = ''
+        })
+        .catch((err) => {
+            console.err("EmailJs error", err)
+            message.value = "Failed to send reset email. Try again."
+        })
+    router.push('/login')
 }
 </script>
 
 <style scoped>
-.form-container {
-    width: 100%;
+* {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.form-card {
     max-width: 600px;
     margin: 4rem auto;
     padding: 2rem;
-    background: #ffffff;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    border-radius: 8px;
-    box-sizing: border-box;
+    display: block;
 }
 
 h1 {
@@ -84,11 +102,12 @@ span {
     margin-top: -0.4rem;
 }
 
-button {
+.pf-c-button {
+    width: 150px;
+    align-self: center;
     background-color: #007bff;
     color: #ffffff;
     border: none;
-    padding: 0.7rem;
     font-weight: bold;
     border-radius: 4px;
     cursor: pointer;

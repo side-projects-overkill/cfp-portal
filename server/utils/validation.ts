@@ -1,4 +1,4 @@
-const rules = {
+export const rules = {
   name: /^[A-Za-z\s]+$/,
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   password: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
