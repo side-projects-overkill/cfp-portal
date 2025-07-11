@@ -1,30 +1,50 @@
 <template>
-    <pf-card class="form-card">
-        <h1>Sign Up</h1>
-        <form @submit.prevent="handleSignup">
-            <template v-for="field in inputFields" :key="field.name">
-                <input v-model="form[field.name]" :type="field.type" :placeholder="field.placeholder">
-                <span>{{ errors[field.name] }}</span>
-            </template>
+    <div class="form-container">
+        <pf-card class="form-card">
+            <div class="card-header">
+                <h1>Create Account</h1>
+                <p class="subtitle">Join us by creating a new account</p>
+            </div>
 
-            <select v-model="form.role">
-                <option disabled value="">Select role</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-            </select>
-            <span>{{ errors.role }}</span>
+            <form @submit.prevent="handleSignup">
+                <template v-for="field in inputFields" :key="field.name">
+                    <div class="input-group">
+                        <input v-model="form[field.name]" :type="field.type" :placeholder="field.placeholder"
+                            :class="{ error: errors[field.name] }" />
+                        <span class="error-message">{{ errors[field.name] }}</span>
+                    </div>
+                </template>
 
-            <pf-button class="pf-c-button">Signup</pf-button>
-        </form>
-    </pf-card>
+                <div class="input-group">
+                    <select v-model="form.role" :class="{ error: errors.role }">
+                        <option disabled value="">Select role</option>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <span class="error-message">{{ errors.role }}</span>
+                </div>
+
+                <pf-button class="pf-c-button login-button">
+                    <span>Sign Up</span>
+                </pf-button>
+
+                <div class="links-container">
+                    <NuxtLink to="/login" class="register-link">
+                        Already have an account? <strong>Login</strong>
+                    </NuxtLink>
+                </div>
+            </form>
+        </pf-card>
+    </div>
 </template>
 
 <script setup>
-import '@patternfly/elements/pf-card/pf-card.js';
+import '@patternfly/elements/pf-card/pf-card.js'
 import '@patternfly/elements/pf-button/pf-button.js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { rules } from '~/server/utils/validation';
+import { rules, errorMessages } from '~/server/utils/validation'
+const config = useRuntimeConfig()
 
 const router = useRouter()
 
@@ -42,13 +62,6 @@ const inputFields = [
 ]
 
 const errors = ref({})
-
-const errorMessages = {
-    name: 'Name should be letters only — no digits or special characters',
-    email: 'Email should contain "@" and "."',
-    password: 'Password should be at least 6 characters, include letters and numbers',
-    role: 'Role must be either user or admin'
-}
 
 function validateField(field, value) {
     if (!value) return `${field} is required`
@@ -71,9 +84,8 @@ async function handleSignup() {
     errors.value = newErrors
 
     if (Object.keys(newErrors).length === 0) {
-        const apiBase = useRuntimeConfig().public.API_BASE_URL
         try {
-            const response = await $fetch(`${apiBase}/api/auth/signup`, {
+            const response = await $fetch(`${config.public.API_BASE_URL}/api/auth/signup`, {
                 method: 'POST',
                 body: {
                     name: form.value.name,
@@ -98,94 +110,5 @@ async function handleSignup() {
             alert(msg)
         }
     }
-
 }
 </script>
-
-<style scoped>
-* {
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.form-card {
-    max-width: 600px;
-    margin: 4rem auto;
-    padding: 2rem;
-    display: block;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 4rem;
-    color: #222222;
-    font-size: 1.8rem;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-input,
-select {
-    padding: 0.6rem;
-    width: 100%;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
-
-span {
-    color: #ff0000;
-    font-size: 0.8rem;
-    display: block;
-    margin-top: -0.4rem;
-}
-
-.pf-c-button {
-    width: 80px;
-    align-self: center;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-}
-
-
-
-
-@media (max-width: 768px) {
-    .form-container {
-        margin: 2rem 1rem;
-        padding: 1.5rem;
-    }
-
-    h1 {
-        font-size: 1.5rem;
-    }
-
-    input,
-    select,
-    button {
-        font-size: 0.95rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .form-container {
-        padding: 1rem;
-    }
-
-    input,
-    select,
-    button {
-        font-size: 0.9rem;
-    }
-}
-</style>

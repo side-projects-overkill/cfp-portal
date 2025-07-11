@@ -27,6 +27,8 @@
     "@unhead/vue": "^2.0.11",
     "bcrypt": "^6.0.0",
     "eslint": "^9.30.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^7.0.5",
     "nuxt": "^3.17.5",
     "pg": "^8.16.3",
     "typescript": "^5.8.3",
@@ -36,6 +38,8 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.15.4",
     "husky": "^8.0.3",
     "lint-staged": "^16.1.2",

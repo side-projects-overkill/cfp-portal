@@ -12,5 +12,15 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/ui'
   ],
-  ssr:false
+  ssr:false,
+  css: [
+    '~/assets/css/auth.css'  
+  ],
+
+  runtimeConfig: {
+    public: {
+      API_BASE_URL: process.env.NUXT_PUBLIC_API_BASE_URL
+    }
+  }
 })
+ 
