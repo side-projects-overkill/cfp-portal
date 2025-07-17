@@ -11,8 +11,8 @@ const invalidCredentialsError = () =>
   })
 
 async function getUserByEmail(email: string) {
-  console.log("Fetching user supabase", process.env.NEXT_PUBLIC_SUPABASE_URL);
-  console.log("Fetching user supabase anon", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  console.log("Fetching user supabase", process.env.SUPABASE_URL);
+  console.log("Fetching user supabase anon", process.env.SUPABASE_ANON_KEY);
   let client
   try {
     client = await pool.connect()
