@@ -33,6 +33,7 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@nuxtjs/supabase": "^1.5.3",
     "@types/bcrypt": "^5.0.2",
     "@types/pg": "^8.15.4",
     "husky": "^8.0.3",
