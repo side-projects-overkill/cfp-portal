@@ -2,7 +2,7 @@
 
 import { defineEventHandler, readBody, createError } from 'h3'
 import bcrypt from 'bcrypt'
-import pool from '../../utils/db'
+import {pool} from '../../utils/db'
 
 const invalidCredentialsError = () =>
   createError({

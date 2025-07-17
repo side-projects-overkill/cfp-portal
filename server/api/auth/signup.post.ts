@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { defineEventHandler, readBody, createError } from 'h3'
 import bcrypt from 'bcrypt'
-import pool from '../../utils/db'
+import {pool}from '../../utils/db'
 import { validateSignupData } from '../../utils/validation'
 
 const userExistsError = () =>

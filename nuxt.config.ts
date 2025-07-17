@@ -11,18 +11,14 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxt/test-utils',
     '@nuxt/ui',
-    '@nuxtjs/supabase'
+    // '@nuxtjs/supabase'
   ],
   runtimeConfig: {
+    supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY,
+    // Public keys (exposed to client-side)
     public: {
       supabaseUrl: process.env.SUPABASE_URL,
-      supabaseKey: process.env.SUPABASE_ANON_KEY
+      supabaseKey: process.env.SUPABASE_ANON_KEY,
     }
   },
-  supabase: {
-    url: process.env.SUPABASE_URL,
-    key: process.env.SUPABASE_ANON_KEY,
-    useSsrCookies: true,
-    redirect: false
-  }
 })
