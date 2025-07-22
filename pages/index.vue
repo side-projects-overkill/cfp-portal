@@ -32,7 +32,7 @@ const login = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: 'http://localhost:3000/dashboard'
+        redirectTo: 'https://cfp-portal-git-cfp-7-github-a-0ff772-rutujakirad-4244s-projects.vercel.app/dashboard', // For development: https://cfp-portal-git-cfp-7-github-a-0ff772-rutujakirad-4244s-projects.vercel.app/dashboard
           // For production: https://cfp-portal.vercel.app/dashboard
       }
     })
