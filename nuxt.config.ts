@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
@@ -13,10 +12,17 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     // '@nuxtjs/supabase'
   ],
+
   runtimeConfig: {
+    githubClientId: process.env.GITHUB_CLIENT_ID,
+    githubClientSecret: process.env.GITHUB_CLIENT_SECRET,
+    supabaseUrl: process.env.SUPABASE_URL,
+    supabaseKey: process.env.SUPABASE_ANON_KEY,
+    
     public: {
+      githubClientId: process.env.GITHUB_CLIENT_ID,
       supabaseUrl: process.env.SUPABASE_URL,
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
-    }
+      supabaseAnonKey: process.env.SUPABASE_ANON_KEY
+    },
   }
 })
